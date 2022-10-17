@@ -51,8 +51,8 @@ def Cargar_Banderas_Calibracion(file, eng, tab):
     RC = RC.apply(pd.Series).stack().reset_index(drop=True)
 
     BDCal['Flag_Zero'] = np.nan
-    BDCal.loc[BDCal.DateTime.isin(RT), ('Flag_Zero')] = 2
-    BDCal.loc[BDCal.DateTime.isin(RC), ('Flag_Zero')] = 1
+    BDCal.loc[BDCal.DateTime.isin(RT), ('Flag_Zero')] = 1 #Bandera Transitoria es 1
+    BDCal.loc[BDCal.DateTime.isin(RC), ('Flag_Zero')] = 2 #Bandera Calibracion es 2
     BDCal.Flag_Zero.fillna(0, inplace=True)
     BDCal.set_index('DateTime', inplace=True)
     BD.Consulta_de_Existencia_Y_Envio_General(BDCal, eng, tab)

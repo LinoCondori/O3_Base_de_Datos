@@ -7,17 +7,17 @@ from sqlalchemy import create_engine
 import BaseDeDatos_Lib_v02 as BD
 
 engine = create_engine('postgresql://postgres:vag@10.30.19.227:5432/GAWUSH_DATABASE')
-Tabla_Data = 'O3_SN_49C-58546-318'
-Tabla_Coef = 'O3_SN_49C-58546-318_Coeficientes'
+Tabla_Data = 'O3_SN_0330102717'
+Tabla_Coef = 'O3_SN_0330102717_Coeficientes'
 Tabla_Zero = 'O3_Calibraciones'
 inicio = pd.to_datetime('2022-01-01 00:00')
 fin = pd.to_datetime('2022-10-01 00:00')
 
 engine_Flag_Manual = create_engine('postgresql://postgres:vag@10.30.19.227:5432/GAWUSH_PROCESADOS')
-Tabla_Flag_Manual = 'O3_SN_49C-58546-318_Minutal_Flag_Manual'
+Tabla_Flag_Manual = 'O3_Minutal_Flag_Manual'
 
 engine_Final = create_engine('postgresql://postgres:vag@10.30.19.227:5432/GAWUSH_PROCESADOS')
-Tabla_Data_Final = 'O3_SN_49C-58546-318_Minutal'
+Tabla_Data_Final = 'O3_SN_0330102717_Minutal'
 
 def CalculoCoeficientesDiarios(data, cal):
     cal = cal.reindex(data.index)
@@ -49,8 +49,8 @@ if __name__ == '__main__':
 
     #Guardar los coeficientes
     O3_Coeficientes.index.name = 'DateTime'
-    #BD.Consulta_de_Existencia_Y_Envio_General(O3_Coeficientes.rename(columns={'O3_Coef_m':'m' ,'O3_Coef_b':'b'}),
-    #                                         engine, Tabla_Coef)
+    BD.Consulta_de_Existencia_Y_Envio_General(O3_Coeficientes.rename(columns={'O3_Coef_m':'m' ,'O3_Coef_b':'b'}),
+                                             engine, Tabla_Coef)
     O3_Coeficientes.to_csv('Coeficientes_' + Tabla_Data + '_' + O3_Raw.DateTime[0]._date_repr + '_to_' +
                            O3_Raw.DateTime[-1]._date_repr + '.csv', index_label='DateTime')
     #MEJORAR LA TOMA DEL AÑO ANTERIOR
@@ -74,8 +74,8 @@ if __name__ == '__main__':
     axes.set_xlim([inicio, fin])
     plt.scatter(O3_Paso_1.DateTime.loc[(O3_FlM.Flag_Manual == 0) & (O3_Cal.Flag_Zero == 0)],
                 O3_Paso_1.O3.loc[(O3_FlM.Flag_Manual == 0) & (O3_Cal.Flag_Zero == 0)], c='grey', s=100)
-    plt.scatter(O3_Paso_1.DateTime.loc[(O3_Paso_1.Flags != '1c000000')],
-                O3_Paso_1.O3.loc[(O3_Paso_1.Flags != '1c000000')], c='red', s=50)
+    plt.scatter(O3_Paso_1.DateTime.loc[(O3_Paso_1.Flags != '1c100000')],
+                O3_Paso_1.O3.loc[(O3_Paso_1.Flags != '1c100000')], c='red', s=50)
 
     axes = plt.subplot(312)
     axes.set_xlim([inicio, fin])
@@ -87,4 +87,4 @@ if __name__ == '__main__':
     plt.scatter(O3_Coeficientes.index, -O3_Coeficientes.O3_Coef_b,)
 
     plt.show()
-    #BD.Consulta_de_Existencia_Y_Envio_DIAxDIA(O3_Paso_1.drop(['DateTime'], axis=1), engine_Final, Tabla_Data_Final)
+    BD.Consulta_de_Existencia_Y_Envio_DIAxDIA(O3_Paso_1.drop(['DateTime'], axis=1), engine_Final, Tabla_Data_Final)
