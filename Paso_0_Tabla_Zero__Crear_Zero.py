@@ -11,7 +11,7 @@ Tabla_Zero = 'O3_Calibraciones'
 Tabla_Data = 'O3_SN_49C-58546-318'
 
 inicio = pd.to_datetime('2022-01-01 00:00')
-fin = pd.to_datetime('2022-08-01 00:00')
+fin = pd.to_datetime('2023-01-01 00:00')
 
 def Generar_Excel_Zero(ini, fin, file):
     Cal = pd.read_excel(file)
@@ -63,6 +63,6 @@ def Cargar_Banderas_Calibracion(file, eng, tab):
 
 
 if __name__ == '__main__':
-    #Generar_Excel_Zero(inicio, fin, 'Zero_2022.xls')
+    Generar_Excel_Zero(inicio, fin, 'Zero_2022.xls')
     Cargar_Banderas_Calibracion('Zero_2022.xls', engine, Tabla_Zero)
 
