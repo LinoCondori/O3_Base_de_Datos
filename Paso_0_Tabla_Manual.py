@@ -70,7 +70,7 @@ def quitar_segun_index(df, engine, tabla):
 
 
 inicio = pd.to_datetime('2022-01-01 00:00')
-fin = pd.to_datetime('2022-10-01 00:00')
+fin = pd.to_datetime('2023-01-01 00:00')
 
 engine_Flag_Manual = create_engine('postgresql://postgres:vag@10.30.19.227:5432/GAWUSH_PROCESADOS') #create_engine('postgresql://:procesado@10.30.19.227:5432/GAWUSH_PROCESADOS')
 Tabla_Flag_Manual = 'O3_Minutal_Flag_Manual'
@@ -130,7 +130,7 @@ if __name__ == '__main__':
     plt.plot(O3_Minutal.DateTime.loc[REGISTRADOS], O3_Minutal.O3.loc[REGISTRADOS], c='green', linestyle='', marker='.', )
 
     plt.show()
-    #BD.Consulta_de_Existencia_Y_Envio_DIAxDIA(O3_Flag_Manual, engine_Flag_Manual, Tabla_Flag_Manual)
+    BD.Consulta_de_Existencia_Y_Envio_DIAxDIA(O3_Flag_Manual, engine_Flag_Manual, Tabla_Flag_Manual)
     #O3_UPDATE = O3_Flag_Manual.loc[O3_Flag_Manual.Flag_Manual != O3_Flag_Manual_Original.Flag_Manual]
     #quitar_segun_index(O3_UPDATE, engine_Flag_Manual, Tabla_Flag_Manual)
     #BD.Consulta_de_Existencia_Y_Envio_DIAxDIA(O3_UPDATE, engine_Flag_Manual, Tabla_Flag_Manual)

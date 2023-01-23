@@ -15,7 +15,7 @@ Tabla_Flag_Wind = 'O3_SN_0330102717_Minutal_Flag_Wind'
 Tabla_SMN_Hr = 'O3_SMN_BaseLine_Hr'
 
 inicio = pd.to_datetime('2022-01-01 00:00')
-fin = pd.to_datetime('2022-10-01 00:00')
+fin = pd.to_datetime('2023-01-01 00:00')
 
 
 if __name__ == '__main__':

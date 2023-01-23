@@ -15,7 +15,7 @@ Tabla_Wind = 'SIAP'
 Tabla_Wind_Flag = 'O3_SN_0330102717_Minutal_Flag_Wind'
 
 inicio = pd.to_datetime('2022-01-01 00:00')
-fin = pd.to_datetime('2022-10-01 00:00')
+fin = pd.to_datetime('2023-01-01 00:00')
 
 engine_Final = create_engine('postgresql://postgres:vag@10.30.19.227:5432/GAWUSH_PROCESADOS')
 Tabla_Data_Final = 'O3_SN_0330102717_Flag_Wind'
