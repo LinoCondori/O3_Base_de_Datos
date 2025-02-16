@@ -69,18 +69,19 @@ def quitar_segun_index(df, engine, tabla):
 
 
 
-inicio = pd.to_datetime('2022-01-01 00:00')
-fin = pd.to_datetime('2023-01-01 00:00')
+inicio = pd.to_datetime('2024-01-01 00:00')
+fin = pd.to_datetime('2025-01-01 00:00')
 
-engine_Flag_Manual = create_engine('postgresql://postgres:vag@10.30.19.227:5432/GAWUSH_PROCESADOS') #create_engine('postgresql://:procesado@10.30.19.227:5432/GAWUSH_PROCESADOS')
+engine_Flag_Manual = create_engine('postgresql://postgres:vag@10.30.19.5:5432/GAWUSH_PROCESADOS') #create_engine('postgresql://:procesado@10.30.19.227:5432/GAWUSH_PROCESADOS')
 Tabla_Flag_Manual = 'O3_Minutal_Flag_Manual'
-engine = create_engine('postgresql://postgres:vag@10.30.19.227:5432/GAWUSH_PROCESADOS')
-Tabla_Data = 'O3_SN_0330102717_Minutal'
-
+engine = create_engine('postgresql://postgres:vag@10.30.19.5:5432/GAWUSH_DATABASE')
+Tabla_Data = 'O3_SN_0330102717'
+Tabla_Data_Duplicada = 'O3_SN_49C-58546-318'
 
 if __name__ == '__main__':
     O3_Flag_Manual = BD.buscarEnBaseDeDatos(engine_Flag_Manual, Tabla_Flag_Manual, inicio, fin)
     O3_Minutal = BD.buscarEnBaseDeDatos(engine, Tabla_Data, inicio, fin)
+    O3_Minutal_Dup = BD.buscarEnBaseDeDatos(engine, Tabla_Data_Duplicada, inicio, fin)
     index_ = pd.date_range(inicio, fin, freq='T', closed='left')
     O3_Flag_Manual = O3_Flag_Manual.reindex(index_)
     O3_Flag_Manual.drop('DateTime', axis=1, inplace=True)
@@ -101,16 +102,17 @@ if __name__ == '__main__':
 
     O3_Minutal['Flag_Manual'] = np.nan
     O3_Minutal.Flag_Manual.update(O3_Flag_Manual.Flag_Manual)
-    NO_NORMAL = O3_Minutal.Flags != '1c100000'
+    NO_NORMAL = (O3_Minutal.Flags != '1c100000') & (O3_Minutal.Flags !='1c101000')
     NO_REGISTRADOS = NO_NORMAL & (O3_Minutal.Flag_Manual == 0)
     REGISTRADOS = NO_NORMAL & (O3_Minutal.Flag_Manual != 0)
     axes = plt.subplot(311)
     axes.set_xlim([inicio, fin])
     axes.set_ylim([0, 40])
 
-    plt.scatter(O3_Minutal.DateTime, O3_Minutal.O3, c='grey', s=100)
+    plt.scatter(O3_Minutal.DateTime, O3_Minutal.O3, c='blue', s=100)
+    plt.scatter(O3_Minutal_Dup.DateTime, O3_Minutal_Dup.O3, c='green', s=50)
     plt.scatter(O3_Minutal.DateTime.loc[NO_NORMAL],
-                O3_Minutal.O3.loc[NO_NORMAL], c='brown', s=10, alpha=0.1)
+                O3_Minutal.O3.loc[NO_NORMAL], c='brown', s=10, alpha=1)
     """
     plt.scatter(O3_Paso_2.DateTime.loc[(O3_Paso_2.Flag_Wind == 1189) & (O3_Paso_2.Flag_Zero == 0)],
                 O3_Paso_2.O3.loc[(O3_Paso_2.Flag_Wind == 1189) & (O3_Paso_2.Flag_Zero == 0)], c='green', s=10,
@@ -118,19 +120,19 @@ if __name__ == '__main__':
     plt.scatter(O3_Paso_2.DateTime.loc[(O3_Paso_2.Flag_Wind == 1188) & (O3_Paso_2.Flag_Zero == 0)],
                 O3_Paso_2.O3.loc[(O3_Paso_2.Flag_Wind == 1188) & (O3_Paso_2.Flag_Zero == 0)], c='red', s=2, alpha=0.1)"""
 
-    axes = plt.subplot(312)
-    axes.set_title('Viento (Rapidez) [m/s]')
+    axes = plt.subplot(312, sharex=axes)
+    axes.set_title('O3 [ppb]')
     axes.set_xlim([inicio, fin])
     #axes.get_xaxis().set_visible(False)
     plt.plot(O3_Minutal.DateTime.loc[NO_REGISTRADOS], O3_Minutal.O3.loc[NO_REGISTRADOS], c='red', linestyle='', marker='.', )
 
-    axes = plt.subplot(313)
-    axes.set_title('Viendo (Direccion) [Grados]')
+    axes = plt.subplot(313, sharex=axes)
+    axes.set_title('O3 [ppb]')
     axes.set_xlim([inicio, fin])
     plt.plot(O3_Minutal.DateTime.loc[REGISTRADOS], O3_Minutal.O3.loc[REGISTRADOS], c='green', linestyle='', marker='.', )
 
     plt.show()
-    BD.Consulta_de_Existencia_Y_Envio_DIAxDIA(O3_Flag_Manual, engine_Flag_Manual, Tabla_Flag_Manual)
+    #BD.Consulta_de_Existencia_Y_Envio_DIAxDIA(O3_Flag_Manual, engine_Flag_Manual, Tabla_Flag_Manual)
     #O3_UPDATE = O3_Flag_Manual.loc[O3_Flag_Manual.Flag_Manual != O3_Flag_Manual_Original.Flag_Manual]
     #quitar_segun_index(O3_UPDATE, engine_Flag_Manual, Tabla_Flag_Manual)
     #BD.Consulta_de_Existencia_Y_Envio_DIAxDIA(O3_UPDATE, engine_Flag_Manual, Tabla_Flag_Manual)

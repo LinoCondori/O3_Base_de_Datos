@@ -6,17 +6,17 @@ import matplotlib.pyplot as plt
 from sqlalchemy import create_engine
 import BaseDeDatos_Lib_v02 as BD
 
-engine = create_engine('postgresql://postgres:vag@10.30.19.227:5432/GAWUSH_DATABASE')
+engine = create_engine('postgresql://postgres:vag@10.30.19.5:5432/GAWUSH_DATABASE')
 Tabla_Data = 'O3_SN_0330102717'
 Tabla_Coef = 'O3_SN_0330102717_Coeficientes'
 Tabla_Zero = 'O3_Calibraciones'
-inicio = pd.to_datetime('2022-01-01 00:00')
-fin = pd.to_datetime('2023-01-01 00:00')
+inicio = pd.to_datetime('2024-01-01 00:00')
+fin = pd.to_datetime('2024-10-01 00:00')
 
-engine_Flag_Manual = create_engine('postgresql://postgres:vag@10.30.19.227:5432/GAWUSH_PROCESADOS')
+engine_Flag_Manual = create_engine('postgresql://postgres:vag@10.30.19.5:5432/GAWUSH_PROCESADOS')
 Tabla_Flag_Manual = 'O3_Minutal_Flag_Manual'
 
-engine_Final = create_engine('postgresql://postgres:vag@10.30.19.227:5432/GAWUSH_PROCESADOS')
+engine_Final = create_engine('postgresql://postgres:vag@10.30.19.5:5432/GAWUSH_PROCESADOS')
 Tabla_Data_Final = 'O3_SN_0330102717_Minutal'
 
 def CalculoCoeficientesDiarios(data, cal):

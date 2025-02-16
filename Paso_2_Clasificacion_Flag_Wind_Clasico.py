@@ -8,16 +8,16 @@ import BaseDeDatos_Lib_v02 as BD
 import O3_Nilu_Programas_v0_02 as NL
 
 
-engine = create_engine('postgresql://postgres:vag@10.30.19.227:5432/GAWUSH_PROCESADOS')
+engine = create_engine('postgresql://postgres:vag@10.30.19.5:5432/GAWUSH_PROCESADOS')
 Tabla_Data = 'O3_SN_0330102717_Minutal'
-engine_wind = create_engine('postgresql://postgres:vag@10.30.19.227:5432/GAWUSH_DATABASE')
-Tabla_Wind = 'SIAP'
+engine_wind = create_engine('postgresql://postgres:vag@10.30.19.5:5432/GAWUSH_PROCESADOS')
+Tabla_Wind = 'WindFlags'
 Tabla_Wind_Flag = 'O3_SN_0330102717_Minutal_Flag_Wind'
 
-inicio = pd.to_datetime('2022-01-01 00:00')
-fin = pd.to_datetime('2023-01-01 00:00')
+inicio = pd.to_datetime('2023-01-01 00:00')
+fin = pd.to_datetime('2024-01-01 00:00')
 
-engine_Final = create_engine('postgresql://postgres:vag@10.30.19.227:5432/GAWUSH_PROCESADOS')
+engine_Final = create_engine('postgresql://postgres:vag@10.30.19.5:5432/GAWUSH_PROCESADOS')
 Tabla_Data_Final = 'O3_SN_0330102717_Flag_Wind'
 
 
@@ -135,7 +135,7 @@ if __name__ == '__main__':
     O3_Meteo = BD.buscarEnBaseDeDatos(engine_wind, Tabla_Wind, inicio, fin)
 
     #Clasificar de acuerdo al viento
-
+    """
     O3_Meteo['Flag_Wind'] = np.nan
     Flag188 = O3_Meteo.apply(lambda x: Flag_Wind_Cal(x, 188, 0, 2.5, 0, 360), axis=1)
     Flag189 = O3_Meteo.apply(lambda x: Flag_Wind_Cal(x, 189, 2.5, 99, 300, 200), axis=1)
@@ -144,11 +144,11 @@ if __name__ == '__main__':
     O3_Meteo.Flag_Wind.update(Flag189)
     O3_Meteo.Flag_Wind.update(Flag000)
     O3_Meteo.Flag_Wind.fillna(1999, inplace=True) # Mejorar con un aproximado
-
+    """
     #A cada agrupamiento verificar su bandera
 
     O3_Minutal['Flag_Wind'] = np.nan
-    O3_Minutal.Flag_Wind.update(O3_Meteo.Flag_Wind)
+    O3_Minutal.Flag_Wind.update(O3_Meteo.Flag)
     O3_Paso_2 =  O3_Minutal
 
     #O3_Paso_2 = pd.concat([O3_Paso_2.O3, O3_Cal.Flag_Zero], axis=1)
@@ -164,24 +164,27 @@ if __name__ == '__main__':
     plt.scatter(O3_Paso_2.DateTime.loc[(O3_Paso_2.Flag_Wind == 1188) & (O3_Paso_2.Flag_Zero == 0)],
                 O3_Paso_2.O3.loc[(O3_Paso_2.Flag_Wind == 1188) & (O3_Paso_2.Flag_Zero == 0)], c='red', s=2, alpha=0.1)
     axes = plt.subplot(312)
-    axes.set_title('Viento (Rapidez) [m/s]')
+    axes.set_title('')
     axes.set_xlim([inicio, fin])
     axes.get_xaxis().set_visible(False)
-    plt.plot(O3_Meteo.DateTime, O3_Meteo.ViMS, linestyle='', marker='.', )
+    axes.set_ylim([0, 40])
+    plt.scatter(O3_Paso_2.DateTime, O3_Paso_2.O3, c='grey', s=100)
+    plt.scatter(O3_Paso_2.DateTime.loc[(O3_Paso_2.Flag_Wind == 1000) & (O3_Paso_2.Flag_Zero == 0)],
+                O3_Paso_2.O3.loc[(O3_Paso_2.Flag_Wind == 1000) & (O3_Paso_2.Flag_Zero == 0)], c='blue', s=10, alpha=0.1)
+    #plt.plot(O3_Meteo.DateTime, O3_Meteo.ViMS, linestyle='', marker='.', )
 
     axes = plt.subplot(313)
-    axes.set_title('Viendo (Direccion) [Grados]')
-
-
-
-
-
+    axes.set_title('')
     axes.set_xlim([inicio, fin])
-    plt.plot(O3_Meteo.DateTime, O3_Meteo.VdGrad, linestyle='', marker='.', )
+    axes.set_ylim([0, 40])
+    plt.scatter(O3_Paso_2.DateTime, O3_Paso_2.O3, c='grey', s=100)
+    plt.scatter(O3_Paso_2.DateTime.loc[(O3_Paso_2.Flag_Wind == 1189) & (O3_Paso_2.Flag_Zero == 0)],
+                O3_Paso_2.O3.loc[(O3_Paso_2.Flag_Wind == 1189) & (O3_Paso_2.Flag_Zero == 0)], c='green', s=10,
+                alpha=0.1)
 
     plt.show()
     O3_Paso_2.Flag_Wind = (O3_Paso_2.Flag_Wind - 1000)/1000
-    BD.Consulta_de_Existencia_Y_Envio_DIAxDIA(O3_Paso_2.Flag_Wind, engine_Final, Tabla_Wind_Flag)
+    #BD.Consulta_de_Existencia_Y_Envio_DIAxDIA(O3_Paso_2.Flag_Wind, engine_Final, Tabla_Wind_Flag)
 
 
 
